@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+                font-family: Arial, sans-serif;
+                box-sizing: border-box;
+            }
+
+            header {
+                position: fixed;
+                background-color: lightgreen;
+                top: 0;
+                height: 50px;
+                width: 100vw;
+                overflow: hidden;
+            }
+
+            .dalam {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 100%;
+                padding: 0 10px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                color: white;
+                text-shadow:
+                    2px 0 2px green,
+                    0 2px 2px yellow;
+                margin: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            #pencarian {
+                position: absolute;
+                left: -120%;
+                top: 0;
+                height: 100%;
+                width: 100%;
+                font-size: 1.2rem;
+                border: none;
+                outline: none;
+                padding: 0 10px;
+                transition: left 0.4s ease;
+            }
+
+            .search {
+                font-size: 1.5rem;
+                background: none;
+                border: none;
+                cursor: pointer;
+                z-index: 2;
+            }
+
+            .dalam.show-search #pencarian {
+                left: 0;
+            }
+
+            .dalam.show-search h1 {
+                opacity: 0;
+            }
+
+            .container,
+            footer {
+                margin-top: 50px;
+            }
+
+            .container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 5px;
+                padding: 10px;
+                overflow: auto;
+                margin-bottom: 60px;
+            }
+            .card {
+                border-radius: 10px;
+                border: 2px solid black;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+            .gambar {
+                min-width: 80%;
+                background-size: cover;
+                background-position: center;
+                aspect-ratio: 1/1;
+            }
+            .produkNama,
+            .produkHarga,
+            .produkDetails {
+                margin: 5px 5px;
+            }
+            .produkBeli {
+                background: orange;
+                border: none;
+                width: 100%;
+                padding: 5px;
+                margin-top: 10px;
+                font-size: 1.2rem;
+                font-weight: bold;
+                margin-top: auto;
+                cursor: pointer;
+            }
+
+            footer {
+                position: fixed;
+                background-color: lightgreen;
+                bottom: 0;
+                height: 50px;
+                width: 100vw;
+                overflow: hidden;
+                text-align: center;
+            }
+            footer a {
+                all: unset;
+                font-size: 1.5rem;
+                background: none;
+                border: none;
+                color: white;
+                font-weight: bold;
+                line-height: 50px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="dalam" id="headerDalam">
+                <h1>Baim STORE</h1>
+                <input
+                    type="text"
+                    id="pencarian"
+                    placeholder="Cari produk..."
+                />
+                <button type="button" class="search" id="searchBtn">🔍</button>
+            </div>
+        </header>
+
+        <div class="container"></div>
+
+        <footer>
+            <a href="cart.html">Keranjang 🛒</a>
+        </footer>
+
+        <script>
+            const produk = [
+                {
+                    id: 1,
+                    nama: "baju kaos oversize",
+                    harga: 50,
+                    gambar: "bajuOversize.jpeg"
+                },
+                {
+                    id: 2,
+                    nama: "baju kaos polos",
+                    harga: 25,
+                    gambar: "bajuKaosPolos.jpeg"
+                },
+                {
+                    id: 3,
+                    nama: "baju crewneck polos",
+                    harga: 70,
+                    gambar: "bajuCrewneck.jpeg"
+                },
+                {
+                    id: 4,
+                    nama: "baju training radisson",
+                    harga: 110,
+                    gambar: "bajuRadisson.jpeg"
+                },
+                {
+                    id: 5,
+                    nama: "jaket jeans hoodie",
+                    harga: 181,
+                    gambar: "jaketHoodie.jpeg"
+                },
+                {
+                    id: 6,
+                    nama: "sandal selop karet",
+                    harga: 32,
+                    gambar: "sandal.jpeg"
+                },
+                {
+                    id: 7,
+                    nama: "jaket jeans denim",
+                    harga: 160,
+                    gambar: "jaketDenim.jpeg"
+                },
+                {
+                    id: 8,
+                    nama: "baju kemeja lengan pendek",
+                    harga: 105,
+                    gambar: "kemeja.jpeg"
+                }
+            ];
+            const searchBtn = document.getElementById("searchBtn");
+            const headerDalam = document.getElementById("headerDalam");
+            const container = document.querySelector(".container");
+            
+          
+            
+            function membeli(){
+              document.querySelectorAll(".card button").forEach( b => {
+                b.addEventListener("click", function () {
+                  const id = parseInt(b.dataset.id);
+                    const produkDipilih = produk.find(p => p.id === id);
+                    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                    
+                    cart.push({
+                        id: produkDipilih.id,
+                        nama: produkDipilih.nama,
+                        harga: produkDipilih.harga,
+                        gambar: produkDipilih.gambar,
+                        jumlah: 1
+                    });
+                    
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    alert(`${produkDipilih.nama} dimasukkan ke keranjang`);
+                });
+            });
+            
+            }
+            
+            
+            function tampilkanProduk(list){
+              container.innerHTML = "";
+            list.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `<div class="gambar" style="background-image : url(${item.gambar})"></div>
+              <h3 class="produkNama">${item.nama}</h3>
+              <p class="produkHarga">Rp. ${item.harga}.000</p>
+              <details class="produkDetails">
+              <summary>deskripsi</summary>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda pariatur magnam nihil perferendis numquam cupiditate.</p>
+              </details>
+              <button class="produkBeli" data-id="${item.id}">beli</button>`;
+
+                container.appendChild(card);
+            });
+            membeli();
+            }
+            
+            tampilkanProduk(produk);
+            
+            searchBtn.addEventListener("click", () => {
+                const pencarian = document.getElementById("pencarian");
+
+                if (!headerDalam.classList.contains("show-search")) {
+                    headerDalam.classList.add("show-search");
+                    pencarian.focus();
+                } else {
+                    const keyword = pencarian.value.trim().toLowerCase();
+                    container.innerHTML = "";
+
+                    if (!keyword) {
+                        container.innerHTML =
+                            "<h2>Keyword tidak boleh kosong</h2>";
+                    } else {
+                        const hasil = produk.filter(p =>
+                            p.nama.toLowerCase().includes(keyword)
+                        );
+
+                        if (hasil.length > 0) {
+                            tampilkanProduk(hasil);
+                        } else {
+                            container.innerHTML = `<h2>Produk dengan kata "${keyword}" tidak ditemukan</h2>`;
+                        }
+                    }
+
+                    headerDalam.classList.remove("show-search");
+                    pencarian.value = "";
+                }
+            });
+        </script>
+    </body>
+</html>

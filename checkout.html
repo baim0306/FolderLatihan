@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Checkout - Baim STORE</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        header {
+            position: fixed;
+            background-color: lightgreen;
+            top: 0;
+            height: 50px;
+            width: 100vw;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: white;
+            text-shadow:
+                2px 0 2px green,
+                0 2px 2px yellow;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .container {
+            margin-top: 60px;
+            padding: 10px;
+            margin-bottom: 60px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #eee;
+        }
+
+        tfoot td {
+            font-weight: bold;
+        }
+
+        footer {
+            position: fixed;
+            background-color: lightgreen;
+            bottom: 0;
+            height: 50px;
+            width: 100vw;
+            text-align: center;
+        }
+
+        footer button {
+            all: unset;
+            font-size: 1.2rem;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: bold;
+            line-height: 50px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Checkout</h1>
+    </header>
+
+    <div class="container">
+        <table id="tabelCheckout">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Produk</th>
+                    <th>Harga</th>
+                    <th>Jumlah</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">Total</td>
+                    <td id="totalHarga">Rp 0</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <footer>
+        <button id="selesai">Selesaikan Pesanan</button>
+    </footer>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const tbody = document.querySelector("#tabelCheckout tbody");
+        const totalHargaEl = document.getElementById("totalHarga");
+
+        function formatRupiah(angka) {
+            return "Rp " + angka.toLocaleString("id-ID") + ",000";
+        }
+
+        function renderCheckout() {
+            tbody.innerHTML = "";
+            let total = 0;
+
+            if (cart.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5">Keranjang kosong</td></tr>`;
+                totalHargaEl.textContent = formatRupiah(0);
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                const jumlah = item.jumlah || 1;
+                const subtotal = item.harga * jumlah;
+                total += subtotal;
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.nama}</td>
+                    <td>${formatRupiah(item.harga)}</td>
+                    <td>${jumlah}</td>
+                    <td>${formatRupiah(subtotal)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            totalHargaEl.textContent = formatRupiah(total);
+        }
+
+        document.getElementById("selesai").addEventListener("click", () => {
+            if (cart.length === 0) {
+                alert("Tidak ada pesanan untuk diselesaikan.");
+                return;
+            }
+            alert("Terima kasih! Pesanan Anda telah diselesaikan.");
+            localStorage.removeItem("cart");
+            window.location.href = "index.html";
+        });
+
+        renderCheckout();
+    </script>
+</body>
+</html>

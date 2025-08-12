@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+                font-family: Arial, sans-serif;
+                box-sizing: border-box;
+            }
+
+            header {
+                position: fixed;
+                background-color: lightgreen;
+                top: 0;
+                height: 50px;
+                width: 100vw;
+                overflow: hidden;
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                color: white;
+                text-shadow:
+                    2px 0 2px green,
+                    0 2px 2px yellow;
+                margin: 0;
+                font-weight: bold;
+            }
+
+            .container,
+            footer {
+                margin-top: 50px;
+            }
+
+            .container {
+                padding: 10px;
+                overflow: auto;
+                margin-bottom: 60px;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .card {
+                border-radius: 10px;
+                border: 2px solid black;
+                overflow: hidden;
+                display: flex;
+                justify-content: space-between;
+            }
+            .gambar {
+                min-width: 20%;
+                margin: 5px;
+                background-size: cover;
+                background-position: center;
+                aspect-ratio: 1/1;
+                border-radius: 5px;
+            }
+
+            .info {
+                padding: 5px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-evenly;
+                width: 60%;
+            }
+
+            #jumlah {
+                padding: 2px;
+                font-size: 1rem;
+            }
+
+            .kotakSampah {
+                font-size: 4rem;
+                align-self: center;
+            }
+
+            footer {
+                position: fixed;
+                background-color: lightgreen;
+                bottom: 0;
+                height: 50px;
+                width: 100vw;
+                overflow: hidden;
+                text-align: center;
+                display: flex;
+                justify-content: space-evenly;
+            }
+
+            footer a {
+                font-size: 1.5rem;
+                text-decoration: none;
+                color: white;
+                font-weight: bold;
+                display: inline-block;
+                line-height: 60px;
+                width: 40%;
+            }
+
+            footer button {
+                all: unset;
+                font-size: 1.5rem;
+                background: none;
+                border: none;
+                color: white;
+                font-weight: bold;
+                display: inline-block;
+                width: 40%;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Baim STORE</h1>
+        </header>
+
+        <div class="container"></div>
+
+        <footer>
+            <a href="index.html">Kembali Belanja</a>
+            <button class="beli">CheckOut</button>
+        </footer>
+
+        <script>
+            const container = document.querySelector(".container");
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            function cartDetect() {
+                container.innerHTML = "";
+                if (cart.length === 0) {
+                    container.innerHTML = "keranjang kosong";
+                    return;
+                }
+                cart.forEach((item, index) => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    card.innerHTML = `
+            <div class="gambar" style="background-image : url(${
+                item.gambar
+            })"></div>
+            <div class="info">
+                <h3 class="produkNama">${item.nama}</h3>
+                <p class="produkHarga">Rp. ${
+                    item.harga * (item.jumlah || 1)
+                }.000</p>
+                <input id="jumlah" type="number" value="${
+                    item.jumlah || 1
+                }" min="1" required>
+            </div>
+            <div class="kotakSampah">🗑️</div>
+        `;
+
+                    card.querySelector(".kotakSampah").addEventListener(
+                        "click",
+                        function () {
+                            cart.splice(index, 1);
+                            localStorage.setItem("cart", JSON.stringify(cart));
+                            cartDetect();
+                        }
+                    );
+
+                    card.querySelector("#jumlah").addEventListener(
+                        "change",
+                        e => {
+                            let jumlahBaru = parseInt(e.target.value);
+                            item.jumlah = jumlahBaru;
+                            localStorage.setItem("cart", JSON.stringify(cart));
+                            cartDetect();
+                        }
+                    );
+
+                    container.appendChild(card);
+                });
+            }
+            
+            function CheckOut(){
+              if (cart.length === 0){
+                alert('silahkan belanja dulu');
+              }
+              window.location.href = "Checkout.html";
+            }
+            
+            const beli = document.querySelector('.beli');
+            beli.addEventListener('click', function() {
+              CheckOut();
+            });
+            cartDetect();
+        </script>
+    </body>
+</html>
